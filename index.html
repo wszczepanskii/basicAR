@@ -12,10 +12,16 @@
 	</head>
 	<body>
 		<script type="importmap">
-			{
+			<!-- {
 				"imports": {
 					"three": "../build/three.module.js",
 					"three/addons/": "./jsm/"
+				}
+			} -->
+			{
+				"imports": {
+					"three": "./node_modules/three/build/three.module.js",
+					"three/addons/": "./node_modules/three/examples/jsm/"
 				}
 			}
 		</script>
