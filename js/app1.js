@@ -6,6 +6,8 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 let camera, scene, renderer, controller, controls;
 let mesh;
+let obj = new THREE.Object3D();
+let hasLoaded = false;
 
 const init = () => {
 	const container = document.createElement("div");
@@ -75,7 +77,6 @@ const loadModel = (model) => {
 		// const group = new THREE.Group();
 		// group.add(glb.scene);
 		// console.log(glb.asset);
-		let obj = new THREE.Object3D();
 
 		// obj = glb.scene.scale.set(
 		// 	0.001 * glb.scene.scale.x,
@@ -91,6 +92,7 @@ const loadModel = (model) => {
 		);
 
 		scene.add(obj);
+		hasLoaded = true;
 	});
 };
 
@@ -106,7 +108,12 @@ const animate = () => {
 	renderer.setAnimationLoop(render);
 };
 
+const rotateModel = () => {
+	obj.rotation.y = obj.rotation.y - 0.01;
+};
+
 const render = () => {
+	if (hasLoaded) rotateModel();
 	renderer.render(scene, camera);
 };
 
