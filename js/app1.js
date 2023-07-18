@@ -4,17 +4,18 @@ import { ARButton } from "three/addons/webxr/ARButton.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 // import { RGBELoader } from "three/addons/loaders/lwo/RGBELoader.js";
 
-let camera, scene, renderer, controller, controls;
-let mesh;
+let camera, scene, renderer, controller, controls, reticle;
 let obj = new THREE.Object3D();
-let hasLoaded = false;
+let isModel = false;
+
+let hitTestSource = null;
+let hitTestSourceRequested = false;
 
 const init = () => {
 	const container = document.createElement("div");
 	document.body.append(container);
 
 	scene = new THREE.Scene();
-	// scene.background = new THREE.Color("black");
 
 	camera = new THREE.PerspectiveCamera(
 		70,
@@ -34,65 +35,97 @@ const init = () => {
 	light.position.set(0.5, 1, 0.25);
 	scene.add(light);
 
-	// const geometry = new THREE.IcosahedronGeometry(0.1, 1);
-	// const material = new THREE.MeshPhongMaterial({
-	// 	color: new THREE.Color("rgb(226,35,213)"),
-	// 	shininess: 6,
-	// 	flatShading: true,
-	// 	transparent: 1,
-	// 	opacity: 0.8,
-	// });
+	addReticleToScene();
 
-	// mesh = new THREE.Mesh(geometry, material);
-	// mesh.position.set(0, 0, -0.5);
-	// console.log(mesh.position);
-	// scene.add(mesh);
-
-	document.body.appendChild(ARButton.createButton(renderer));
+	document.body.appendChild(
+		ARButton.createButton(renderer, { requiredFeatures: ["hit-test"] })
+	);
 
 	// function adds an object to the scene after user's click
 
-	// function onSelect() {
-	// 	const material = new THREE.MeshPhongMaterial({
-	// 		color: 0xffffff * Math.random(),
-	// 	});
-	// 	const mesh = new THREE.Mesh(geometry, material);
-	// 	mesh.position.set(0, 0, -0.3).applyMatrix4(controller.matrixWorld);
-	// 	mesh.quaternion.setFromRotationMatrix(controller.matrixWorld);
-	// 	scene.add(mesh);
-	// }
+	function onSelect() {
+		if (!isModel) loadModel("chair");
+		isModel = true;
+	}
 
-	// controller = renderer.xr.getController(0);
-	// controller.addEventListener("select", onSelect);
-	// scene.add(controller);
-
-	loadModel("chair");
+	controller = renderer.xr.getController(0);
+	controller.addEventListener("select", onSelect);
+	scene.add(controller);
 
 	window.addEventListener("resize", onWindowResize, false);
+
+	let touchDown, touchX, touchY, deltaX, deltaY;
+
+	renderer.domElement.addEventListener(
+		"touchstart",
+		(e) => {
+			e.preventDefault();
+			touchDown = true;
+			touchX = e.touches[0].pageX;
+			touchY = e.touches[0].pageY;
+		},
+		false
+	);
+
+	renderer.domElement.addEventListener(
+		"touchend",
+		(e) => {
+			e.preventDefault();
+			touchDown = false;
+		},
+		false
+	);
+
+	renderer.domElement.addEventListener(
+		"touchmove",
+		(e) => {
+			e.preventDefault();
+
+			if (!touchDown) {
+				return;
+			}
+
+			deltaX = e.touches[0].pageX - touchX;
+			deltaY = e.touches[0].pageY - touchY;
+			touchX = e.touches[0].pageX;
+			touchY = e.touches[0].pageY;
+
+			rotateObject();
+		},
+		false
+	);
 };
+
+function rotateObject() {
+	if (obj && reticle.visible) {
+		obj.rotation.y += deltaX / 100;
+	}
+}
+
+function addReticleToScene() {
+	const geometry = new THREE.RingGeometry(0.15, 0.2, 32).rotateX(-Math.PI / 2);
+	const material = new THREE.MeshBasicMaterial();
+
+	reticle = new THREE.Mesh(geometry, material);
+
+	reticle.matrixAutoUpdate = false;
+	reticle.visible = false;
+	scene.add(reticle);
+}
 
 const loadModel = (model) => {
 	let loader = new GLTFLoader().setPath("../3d/");
 	loader.load(model + ".glb", (glb) => {
-		// const group = new THREE.Group();
-		// group.add(glb.scene);
-		// console.log(glb.asset);
-
-		// obj = glb.scene.scale.set(
-		// 	0.001 * glb.scene.scale.x,
-		// 	0.001 * glb.scene.scale.y,
-		// 	0.001 * glb.scene.scale.z
-		// );
 		obj = glb.scene;
-		obj.position.set(0, -0.1, -0.5);
 		obj.scale.set(
 			0.5 * glb.scene.scale.x,
 			0.5 * glb.scene.scale.y,
 			0.5 * glb.scene.scale.z
 		);
 
+		obj.position.set(0, 0, -0.3).applyMatrix4(controller.matrixWorld);
+		// obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
 		scene.add(obj);
-		hasLoaded = true;
 	});
 };
 
@@ -104,16 +137,45 @@ const onWindowResize = () => {
 };
 
 const animate = () => {
-	requestAnimationFrame(animate);
 	renderer.setAnimationLoop(render);
 };
 
-const rotateModel = () => {
-	obj.rotation.y = obj.rotation.y - 0.01;
-};
+const render = (timestamp, frame) => {
+	if (frame) {
+		const referenceSpace = renderer.xr.getReferenceSpace();
+		const session = renderer.xr.getSession();
 
-const render = () => {
-	if (hasLoaded) rotateModel();
+		if (hitTestSourceRequested === false) {
+			session.requestReferenceSpace("viewer").then(function (referenceSpace) {
+				session
+					.requestHitTestSource({ space: referenceSpace })
+					.then(function (source) {
+						hitTestSource = source;
+					});
+			});
+
+			session.addEventListener("end", function () {
+				hitTestSourceRequested = false;
+				hitTestSource = null;
+			});
+
+			hitTestSourceRequested = true;
+		}
+
+		if (hitTestSource) {
+			const hitTestResults = frame.getHitTestResults(hitTestSource);
+
+			if (hitTestResults.length) {
+				const hit = hitTestResults[0];
+
+				reticle.visible = true;
+				reticle.matrix.fromArray(hit.getPose(referenceSpace).transform.matrix);
+			} else {
+				reticle.visible = false;
+			}
+		}
+	}
+
 	renderer.render(scene, camera);
 };
 
