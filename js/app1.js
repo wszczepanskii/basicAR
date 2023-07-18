@@ -84,12 +84,11 @@ const loadModel = (model) => {
 		// );
 		obj = glb.scene;
 		obj.position.set(0, -0.1, -0.5);
-		// obj.scale.set(
-		// 	0.01 * glb.scene.scale.x,
-		// 	0.01 * glb.scene.scale.y,
-		// 	0.01 * glb.scene.scale.z
-		// );
-		// console.log(obj);
+		obj.scale.set(
+			0.5 * glb.scene.scale.x,
+			0.5 * glb.scene.scale.y,
+			0.5 * glb.scene.scale.z
+		);
 
 		scene.add(obj);
 	});
