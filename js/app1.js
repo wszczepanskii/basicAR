@@ -120,6 +120,7 @@ const loadModel = (model) => {
 			0.5 * glb.scene.scale.y,
 			0.5 * glb.scene.scale.z
 		);
+		obj.rotation.x = Math.PI / 2;
 
 		obj.position.set(0, 0, -0.3).applyMatrix4(controller.matrixWorld);
 		// obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
