@@ -1,8 +1,6 @@
 import * as THREE from "three";
-// import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { ARButton } from "three/addons/webxr/ARButton.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-// import { RGBELoader } from "three/addons/loaders/lwo/RGBELoader.js";
 
 let camera, scene, renderer, controller, controls, reticle;
 let obj = new THREE.Object3D();
