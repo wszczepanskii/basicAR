@@ -112,7 +112,7 @@ function addReticleToScene() {
 }
 
 const loadModel = (model) => {
-	let loader = new GLTFLoader().setPath("../3d/");
+	let loader = new GLTFLoader().setPath("models/");
 	loader.load(model + ".glb", (glb) => {
 		obj = glb.scene;
 		obj.scale.set(
