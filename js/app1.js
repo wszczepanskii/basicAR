@@ -111,21 +111,33 @@ function addReticleToScene() {
 	scene.add(reticle);
 }
 
+function onProgress(xhr) {
+	console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+}
+
+function onError(xhr) {
+	console.error(xhr);
+}
+
 const loadModel = (model) => {
 	let loader = new GLTFLoader().setPath("models/");
-	loader.load(model + ".glb", (glb) => {
-		obj = glb.scene;
-		obj.scale.set(
-			0.5 * glb.scene.scale.x,
-			0.5 * glb.scene.scale.y,
-			0.5 * glb.scene.scale.z
-		);
-		obj.rotation.x = Math.PI / 2;
+	loader.load(
+		model + ".glb",
+		(glb) => {
+			obj = glb.scene;
+			obj.scale.set(
+				0.5 * glb.scene.scale.x,
+				0.5 * glb.scene.scale.y,
+				0.5 * glb.scene.scale.z
+			);
 
-		obj.position.set(0, 0, -0.3).applyMatrix4(controller.matrixWorld);
-		// obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
-		scene.add(obj);
-	});
+			obj.position.set(0, 0, -0.3).applyMatrix4(controller.matrixWorld);
+			// obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
+			scene.add(obj);
+		},
+		onProgress,
+		onError
+	);
 };
 
 const onWindowResize = () => {
