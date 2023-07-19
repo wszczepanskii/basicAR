@@ -132,7 +132,7 @@ const loadModel = (model) => {
 			// );
 
 			obj.position.set(0, 0, -0.3).applyMatrix4(controller.matrixWorld);
-			// obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
+			obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
 			scene.add(obj);
 		},
 		onProgress,
