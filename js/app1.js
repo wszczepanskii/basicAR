@@ -16,6 +16,8 @@ let camera,
 let obj = new THREE.Object3D();
 let isModel = false;
 
+let objPos, objQua, objScale;
+
 let hitTestSource = null;
 let hitTestSourceRequested = false;
 
@@ -59,9 +61,6 @@ function init() {
 	// function adds an object to the scene after user's click
 
 	function onSelect() {
-		// if (!isModel) loadModel("chair");
-		// isModel = true;
-
 		if (reticle.visible && !isModel) {
 			loadModel("doc_animated_smaller");
 			isModel = true;
@@ -76,7 +75,10 @@ function init() {
 			// 	color: 0xffffff * Math.random(),
 			// });
 			// const mesh2 = new THREE.Mesh(geometry2, material2);
-			// reticle.matrix.decompose(mesh2.position, mesh2.quaternion, mesh2.scale);
+			// reticle.matrix.decompose(objPos, objQua, objScale);
+			// console.log(mesh2.position);
+			// console.log(mesh2.quaternion);
+			// console.log(mesh2.scale);
 			// mesh2.scale.y = Math.random() * 2 + 1;
 			// scene.add(mesh2);
 		}
@@ -129,17 +131,28 @@ function loadModel(model) {
 			obj.position.set(0, 0, -0.6).applyMatrix4(controller.matrixWorld);
 			// obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
 			scene.add(obj);
+
 			hasLoaded = true;
 
-			mixer = new THREE.AnimationMixer(obj);
-			const clips = glb.animations;
-			const clip = THREE.AnimationClip.findByName(clips, "Take 001");
-			const action = mixer.clipAction(clip);
-			action.play();
+			// objPos = obj.position;
+			// objQua = obj.quaternion;
+			// objScale = obj.scale;
 
-			clips.forEach((clip) => {
-				mixer.clipAction(clip).play();
-			});
+			// console.log(objPos);
+			// console.log(objQua);
+			// console.log(objScale);
+
+			if (glb.animations.length !== 0) {
+				mixer = new THREE.AnimationMixer(obj);
+				const clips = glb.animations;
+				const clip = THREE.AnimationClip.findByName(clips, "Take 001");
+				const action = mixer.clipAction(clip);
+				action.play();
+
+				clips.forEach((clip) => {
+					mixer.clipAction(clip).play();
+				});
+			}
 		},
 		onProgress,
 		onError
