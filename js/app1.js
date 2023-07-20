@@ -9,7 +9,10 @@ let isModel = false;
 let hitTestSource = null;
 let hitTestSourceRequested = false;
 
-const init = () => {
+init();
+animate();
+
+function init() {
 	const container = document.createElement("div");
 	document.body.append(container);
 
@@ -42,8 +45,28 @@ const init = () => {
 	// function adds an object to the scene after user's click
 
 	function onSelect() {
-		if (!isModel) loadModel("chair");
-		isModel = true;
+		// if (!isModel) loadModel("chair");
+		// isModel = true;
+
+		if (reticle.visible) {
+			// if (reticle.visible && !isModel) {
+			// loadModel("chair");
+			// isModel = true;
+
+			const geometry2 = new THREE.CylinderGeometry(
+				0.1,
+				0.1,
+				0.2,
+				0.32
+			).translate(0, 0.1, 0);
+			const material2 = new THREE.MeshPhongMaterial({
+				color: 0xffffff * Math.random(),
+			});
+			const mesh2 = new THREE.Mesh(geometry2, material2);
+			reticle.matrix.decompose(mesh2.position, mesh2.quaternion, mesh2.scale);
+			mesh2.scale.y = Math.random() * 2 + 1;
+			scene.add(mesh2);
+		}
 	}
 
 	controller = renderer.xr.getController(0);
@@ -92,7 +115,7 @@ const init = () => {
 		},
 		false
 	);
-};
+}
 
 function rotateObject() {
 	if (obj && reticle.visible) {
@@ -119,7 +142,7 @@ function onError(xhr) {
 	console.error(xhr);
 }
 
-const loadModel = (model) => {
+function loadModel(model) {
 	let loader = new GLTFLoader().setPath("models/");
 	loader.load(
 		model + ".glb",
@@ -138,20 +161,20 @@ const loadModel = (model) => {
 		onProgress,
 		onError
 	);
-};
+}
 
-const onWindowResize = () => {
+function onWindowResize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
-};
+}
 
-const animate = () => {
+function animate() {
 	renderer.setAnimationLoop(render);
-};
+}
 
-const render = (timestamp, frame) => {
+function render(timestamp, frame) {
 	if (frame) {
 		const referenceSpace = renderer.xr.getReferenceSpace();
 		const session = renderer.xr.getSession();
@@ -188,7 +211,4 @@ const render = (timestamp, frame) => {
 	}
 
 	renderer.render(scene, camera);
-};
-
-init();
-animate();
+}
