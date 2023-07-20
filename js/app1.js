@@ -48,24 +48,23 @@ function init() {
 		// if (!isModel) loadModel("chair");
 		// isModel = true;
 
-		if (reticle.visible) {
-			// if (reticle.visible && !isModel) {
-			// loadModel("chair");
-			// isModel = true;
+		if (reticle.visible && !isModel) {
+			loadModel("chair");
+			isModel = true;
 
-			const geometry2 = new THREE.CylinderGeometry(
-				0.1,
-				0.1,
-				0.2,
-				0.32
-			).translate(0, 0.1, 0);
-			const material2 = new THREE.MeshPhongMaterial({
-				color: 0xffffff * Math.random(),
-			});
-			const mesh2 = new THREE.Mesh(geometry2, material2);
-			reticle.matrix.decompose(mesh2.position, mesh2.quaternion, mesh2.scale);
-			mesh2.scale.y = Math.random() * 2 + 1;
-			scene.add(mesh2);
+			// const geometry2 = new THREE.CylinderGeometry(
+			// 	0.1,
+			// 	0.1,
+			// 	0.2,
+			// 	0.32
+			// ).translate(0, 0.1, 0);
+			// const material2 = new THREE.MeshPhongMaterial({
+			// 	color: 0xffffff * Math.random(),
+			// });
+			// const mesh2 = new THREE.Mesh(geometry2, material2);
+			// reticle.matrix.decompose(mesh2.position, mesh2.quaternion, mesh2.scale);
+			// mesh2.scale.y = Math.random() * 2 + 1;
+			// scene.add(mesh2);
 		}
 	}
 
@@ -74,8 +73,6 @@ function init() {
 	scene.add(controller);
 
 	window.addEventListener("resize", onWindowResize, false);
-
-	let touchDown, touchX, touchY, deltaX, deltaY;
 
 	renderer.domElement.addEventListener(
 		"touchstart",
@@ -154,9 +151,11 @@ function loadModel(model) {
 			// 	0.5 * glb.scene.scale.z
 			// );
 
-			obj.position.set(0, 0, -0.3).applyMatrix4(controller.matrixWorld);
+			obj.position.set(0, 0, -0.6).applyMatrix4(controller.matrixWorld);
 			// obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
 			scene.add(obj);
+
+			console.log(obj.position);
 		},
 		onProgress,
 		onError
@@ -212,3 +211,44 @@ function render(timestamp, frame) {
 
 	renderer.render(scene, camera);
 }
+
+let touchDown, touchX, touchY, deltaX, deltaY;
+
+obj.addEventListener(
+	"touchstart",
+	(e) => {
+		e.preventDefault();
+		touchDown = true;
+		touchX = e.touches[0].pageX;
+		touchY = e.touches[0].pageY;
+	},
+	false
+);
+
+obj.addEventListener(
+	"touchend",
+	(e) => {
+		e.preventDefault();
+		touchDown = false;
+	},
+	false
+);
+
+obj.addEventListener(
+	"touchmove",
+	(e) => {
+		e.preventDefault();
+
+		if (!touchDown) {
+			return;
+		}
+
+		deltaX = e.touches[0].pageX - touchX;
+		deltaY = e.touches[0].pageY - touchY;
+		touchX = e.touches[0].pageX;
+		touchY = e.touches[0].pageY;
+
+		rotateObject();
+	},
+	false
+);
