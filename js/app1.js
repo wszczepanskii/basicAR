@@ -49,7 +49,7 @@ function init() {
 		// isModel = true;
 
 		if (reticle.visible && !isModel) {
-			loadModel("chair");
+			loadModel("doc_animated_smaller");
 			isModel = true;
 
 			// const geometry2 = new THREE.CylinderGeometry(
@@ -73,45 +73,6 @@ function init() {
 	scene.add(controller);
 
 	window.addEventListener("resize", onWindowResize, false);
-
-	renderer.domElement.addEventListener(
-		"touchstart",
-		(e) => {
-			e.preventDefault();
-			touchDown = true;
-			touchX = e.touches[0].pageX;
-			touchY = e.touches[0].pageY;
-		},
-		false
-	);
-
-	renderer.domElement.addEventListener(
-		"touchend",
-		(e) => {
-			e.preventDefault();
-			touchDown = false;
-		},
-		false
-	);
-
-	renderer.domElement.addEventListener(
-		"touchmove",
-		(e) => {
-			e.preventDefault();
-
-			if (!touchDown) {
-				return;
-			}
-
-			deltaX = e.touches[0].pageX - touchX;
-			deltaY = e.touches[0].pageY - touchY;
-			touchX = e.touches[0].pageX;
-			touchY = e.touches[0].pageY;
-
-			rotateObject();
-		},
-		false
-	);
 }
 
 function rotateObject() {
@@ -145,17 +106,17 @@ function loadModel(model) {
 		model + ".glb",
 		(glb) => {
 			obj = glb.scene;
-			// obj.scale.set(
-			// 	0.5 * glb.scene.scale.x,
-			// 	0.5 * glb.scene.scale.y,
-			// 	0.5 * glb.scene.scale.z
-			// );
+			obj.scale.set(
+				0.5 * glb.scene.scale.x,
+				0.5 * glb.scene.scale.y,
+				0.5 * glb.scene.scale.z
+			);
 
 			obj.position.set(0, 0, -0.6).applyMatrix4(controller.matrixWorld);
 			// obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
 			scene.add(obj);
 
-			console.log(obj.position);
+			console.log(obj.mesh);
 		},
 		onProgress,
 		onError
