@@ -2,7 +2,17 @@ import * as THREE from "three";
 import { ARButton } from "three/addons/webxr/ARButton.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-let camera, scene, renderer, controller, controls, reticle;
+let camera,
+	scene,
+	renderer,
+	controller,
+	controls,
+	reticle,
+	mixer,
+	hasLoaded = false,
+	deltaTime,
+	totalTime,
+	clock;
 let obj = new THREE.Object3D();
 let isModel = false;
 
@@ -41,6 +51,10 @@ function init() {
 	document.body.appendChild(
 		ARButton.createButton(renderer, { requiredFeatures: ["hit-test"] })
 	);
+
+	clock = new THREE.Clock();
+	deltaTime = 0;
+	totalTime = 0;
 
 	// function adds an object to the scene after user's click
 
@@ -115,8 +129,17 @@ function loadModel(model) {
 			obj.position.set(0, 0, -0.6).applyMatrix4(controller.matrixWorld);
 			// obj.quaternion.setFromRotationMatrix(controller.matrixWorld);
 			scene.add(obj);
+			hasLoaded = true;
 
-			console.log(obj.mesh);
+			mixer = new THREE.AnimationMixer(obj);
+			const clips = glb.animations;
+			const clip = THREE.AnimationClip.findByName(clips, "Take 001");
+			const action = mixer.clipAction(clip);
+			action.play();
+
+			clips.forEach((clip) => {
+				mixer.clipAction(clip).play();
+			});
 		},
 		onProgress,
 		onError
@@ -130,8 +153,8 @@ function onWindowResize() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function animate() {
-	renderer.setAnimationLoop(render);
+function update() {
+	if (hasLoaded && mixer !== undefined) mixer.update(deltaTime);
 }
 
 function render(timestamp, frame) {
@@ -171,6 +194,16 @@ function render(timestamp, frame) {
 	}
 
 	renderer.render(scene, camera);
+}
+
+function animate() {
+	renderer.setAnimationLoop(render);
+	requestAnimationFrame(animate);
+
+	deltaTime = clock.getDelta();
+	totalTime += deltaTime;
+
+	update();
 }
 
 let touchDown, touchX, touchY, deltaX, deltaY;
