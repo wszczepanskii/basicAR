@@ -49,7 +49,7 @@ function init() {
 		// isModel = true;
 
 		if (reticle.visible && !isModel) {
-			loadModel("doc_animated_smaller");
+			loadModel("chair");
 			isModel = true;
 
 			// const geometry2 = new THREE.CylinderGeometry(
@@ -74,44 +74,44 @@ function init() {
 
 	window.addEventListener("resize", onWindowResize, false);
 
-	renderer.domElement.addEventListener(
-		"touchstart",
-		(e) => {
-			e.preventDefault();
-			touchDown = true;
-			touchX = e.touches[0].pageX;
-			touchY = e.touches[0].pageY;
-		},
-		false
-	);
+	// renderer.domElement.addEventListener(
+	// 	"touchstart",
+	// 	(e) => {
+	// 		e.preventDefault();
+	// 		touchDown = true;
+	// 		touchX = e.touches[0].pageX;
+	// 		touchY = e.touches[0].pageY;
+	// 	},
+	// 	false
+	// );
 
-	renderer.domElement.addEventListener(
-		"touchend",
-		(e) => {
-			e.preventDefault();
-			touchDown = false;
-		},
-		false
-	);
+	// renderer.domElement.addEventListener(
+	// 	"touchend",
+	// 	(e) => {
+	// 		e.preventDefault();
+	// 		touchDown = false;
+	// 	},
+	// 	false
+	// );
 
-	renderer.domElement.addEventListener(
-		"touchmove",
-		(e) => {
-			e.preventDefault();
+	// renderer.domElement.addEventListener(
+	// 	"touchmove",
+	// 	(e) => {
+	// 		e.preventDefault();
 
-			if (!touchDown) {
-				return;
-			}
+	// 		if (!touchDown) {
+	// 			return;
+	// 		}
 
-			deltaX = e.touches[0].pageX - touchX;
-			deltaY = e.touches[0].pageY - touchY;
-			touchX = e.touches[0].pageX;
-			touchY = e.touches[0].pageY;
+	// 		deltaX = e.touches[0].pageX - touchX;
+	// 		deltaY = e.touches[0].pageY - touchY;
+	// 		touchX = e.touches[0].pageX;
+	// 		touchY = e.touches[0].pageY;
 
-			rotateObject();
-		},
-		false
-	);
+	// 		rotateObject();
+	// 	},
+	// 	false
+	// );
 }
 
 function rotateObject() {
