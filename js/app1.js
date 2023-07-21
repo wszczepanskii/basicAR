@@ -45,7 +45,7 @@ function init() {
 		if (reticle.visible && !isModel) {
 			isModel = true;
 
-			let model = "doc_animated_smaller";
+			let model = "chair";
 
 			let loader = new GLTFLoader().setPath("models/");
 			loader.load(
