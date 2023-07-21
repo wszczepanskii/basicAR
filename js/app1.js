@@ -37,7 +37,7 @@ function init() {
 		// isModel = true;
 
 		if (reticle.visible && !isModel) {
-			loadModel("doc_animated_smaller");
+			loadModel("chair");
 			isModel = true;
 
 			// const geometry2 = new THREE.CylinderGeometry(
