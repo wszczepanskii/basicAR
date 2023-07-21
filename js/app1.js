@@ -211,7 +211,7 @@ function render(timestamp, frame) {
 
 function animate() {
 	renderer.setAnimationLoop(render);
-	requestAnimationFrame(animate);
+	// requestAnimationFrame(animate);
 
 	deltaTime = clock.getDelta();
 	totalTime += deltaTime;
