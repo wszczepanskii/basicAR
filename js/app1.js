@@ -45,20 +45,20 @@ function init() {
 		if (reticle.visible && !isModel) {
 			isModel = true;
 
-			let model = "chair";
+			let model = "doc_animated_smaller";
 
 			let loader = new GLTFLoader().setPath("models/");
 			loader.load(
 				model + ".glb",
 				(glb) => {
 					obj = glb.scene;
-					obj.scale.set(
-						4 * glb.scene.scale.x,
-						4 * glb.scene.scale.y,
-						4 * glb.scene.scale.z
-					);
+					// obj.scale.set(
+					// 	4 * glb.scene.scale.x,
+					// 	4 * glb.scene.scale.y,
+					// 	4 * glb.scene.scale.z
+					// );
 
-					console.log(obj.scale);
+					console.log(glb.animations);
 
 					reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
 					scene.add(obj);
