@@ -62,7 +62,7 @@ function init() {
 
 	function onSelect() {
 		if (reticle.visible && !isModel) {
-			loadModel("doc_animated_smaller");
+			loadModel("chair");
 			isModel = true;
 
 			// const geometry2 = new THREE.CylinderGeometry(
@@ -231,6 +231,10 @@ obj.addEventListener(
 	},
 	false
 );
+
+obj.addEventListener("click", () => {
+	console.log("dsaup");
+});
 
 obj.addEventListener(
 	"touchend",
