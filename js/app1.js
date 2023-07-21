@@ -28,11 +28,14 @@ function init() {
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.useLegacyLights = false;
 	renderer.xr.enabled = true;
+
 	document.body.append(renderer.domElement);
 	const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
 	light.position.set(0.5, 1, 0.25);
 	scene.add(light);
+
 	addReticleToScene();
+
 	document.body.appendChild(
 		ARButton.createButton(renderer, { requiredFeatures: ["hit-test"] })
 	);
@@ -49,21 +52,18 @@ function init() {
 				model + ".glb",
 				(glb) => {
 					obj = glb.scene;
-					// obj.scale.set(
-					// 	1.2 * glb.scene.scale.x,
-					// 	1.2 * glb.scene.scale.y,
-					// 	1.2 * glb.scene.scale.z
-					// );
+					obj.scale.set(
+						4 * glb.scene.scale.x,
+						4 * glb.scene.scale.y,
+						4 * glb.scene.scale.z
+					);
 
-					console.log(obj.position);
+					console.log(obj.scale);
 
-					// obj.position.set(0, 0, -0.6).applyMatrix4(controller.matrixWorld);
 					reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
 					scene.add(obj);
 
 					hasLoaded = true;
-
-					console.log(obj.position);
 				},
 				onProgress,
 				onError
