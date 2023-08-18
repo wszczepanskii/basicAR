@@ -58,7 +58,7 @@ function init() {
 		// 	1.2 * modelArray[0].scene.scale.z
 		// );
 
-		reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
+		// reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
 		// modelArray[0].scene.position.y = 0.25;
 		// modelArray[0].scene.rotation.x = -Math.PI / 2;
 
@@ -75,7 +75,7 @@ function init() {
 		// 	1.2 * modelArray[1].scene.scale.z
 		// );
 
-		reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
+		// reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
 
 		// console.log("middle");
 
@@ -87,6 +87,7 @@ function init() {
 
 	const displayModel = (idx) => {
 		Promise.all([p1, p2]).then(() => {
+			reticle.matrix.decompose(modelArray[idx].scene.position, modelArray[idx].scene.quaternion, modelArray[idx].scene.scale);
 			scene.add(modelArray[idx].scene);
 		});
 	};
