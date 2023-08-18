@@ -5,8 +5,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 let camera, scene, renderer, controller, reticle, hasLoaded;
 
 let obj = new THREE.Object3D();
-let isModel1 = false,
-	isModel2 = false;
+let isModel = false;
 let hitTestSource = null;
 let hitTestSourceRequested = false;
 
@@ -43,8 +42,11 @@ function init() {
 
 	// function adds an object to the scene after user's click
 	function onSelect() {
-		if (reticle.visible && !isModel1) {
-			isModel1 = true;
+		let clickCounter = 0;
+		clickCounter++;
+
+		if (reticle.visible && !isModel) {
+			isModel = true;
 
 			let model = "chair";
 
@@ -87,9 +89,8 @@ function init() {
 			// scene.add(mesh2);
 		}
 
-		if (reticle.visible && !isModel2 && isModel1) {
-			isModel2 = true;
-			let model = "doc_animated_smaller";
+		if (clickCounter === 2) {
+			model = "doc_animated_smaller";
 			loader.load(
 				model + ".glb",
 				(glb) => {
