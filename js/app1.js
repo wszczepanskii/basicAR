@@ -5,7 +5,8 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 let camera, scene, renderer, controller, reticle, hasLoaded;
 
 let obj = new THREE.Object3D();
-let isModel = false;
+let isModel1 = false,
+	isModel2 = false;
 let hitTestSource = null;
 let hitTestSourceRequested = false;
 
@@ -42,34 +43,12 @@ function init() {
 
 	// function adds an object to the scene after user's click
 	function onSelect() {
-		if (reticle.visible && !isModel) {
-			isModel = true;
+		if (reticle.visible && !isModel1) {
+			isModel1 = true;
 
 			let model = "chair";
 
 			let loader = new GLTFLoader().setPath("models/");
-			loader.load(
-				model + ".glb",
-				(glb) => {
-					obj = glb.scene;
-					// obj.scale.set(
-					// 	4 * glb.scene.scale.x,
-					// 	4 * glb.scene.scale.y,
-					// 	4 * glb.scene.scale.z
-					// );
-
-					console.log(glb.animations);
-
-					reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
-					scene.add(obj);
-
-					hasLoaded = true;
-				},
-				onProgress,
-				onError
-			);
-
-			model = "doc_animated_smaller";
 			loader.load(
 				model + ".glb",
 				(glb) => {
@@ -106,6 +85,31 @@ function init() {
 			// mesh2.scale.y = Math.random() * 2 + 1;
 			// mesh2.position.set(0, 0, -0.6).applyMatrix4(controller.matrixWorld);
 			// scene.add(mesh2);
+		}
+
+		if (reticle.visible && !isModel2 && isModel1) {
+			isModel2 = true;
+			let model = "doc_animated_smaller";
+			loader.load(
+				model + ".glb",
+				(glb) => {
+					obj = glb.scene;
+					// obj.scale.set(
+					// 	4 * glb.scene.scale.x,
+					// 	4 * glb.scene.scale.y,
+					// 	4 * glb.scene.scale.z
+					// );
+
+					console.log(glb.animations);
+
+					reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
+					scene.add(obj);
+
+					hasLoaded = true;
+				},
+				onProgress,
+				onError
+			);
 		}
 	}
 
