@@ -9,6 +9,8 @@ let isModel = false;
 let hitTestSource = null;
 let hitTestSourceRequested = false;
 
+let modelArray = [];
+
 init();
 animate();
 
@@ -40,56 +42,114 @@ function init() {
 		ARButton.createButton(renderer, { requiredFeatures: ["hit-test"] })
 	);
 
+	const laodModel = (url) => {
+		return new Promise((resolve) => {
+			new GLTFLoader().load(url, resolve);
+		});
+	};
+
+	let p1 = laodModel("models/chair.glb").then((result) => {
+		let obj = result.scene;
+		modelArray[0] = result;
+		modelArray[0].scene.scale.set(
+			1.2 * modelArray[0].scene.scale.x,
+			1.2 * modelArray[0].scene.scale.y,
+			1.2 * modelArray[0].scene.scale.z
+		);
+
+		reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
+		// modelArray[0].scene.position.y = 0.25;
+		// modelArray[0].scene.rotation.x = -Math.PI / 2;
+
+		// hasLoadedAnim = true;
+	});
+
+	let p2 = laodModel("models/doc_animated_smaller.glb").then((result) => {
+		// console.log("start");
+		let obj = result.scene;
+		modelArray[1] = result;
+		modelArray[1].scene.scale.set(
+			1.2 * modelArray[1].scene.scale.x,
+			1.2 * modelArray[1].scene.scale.y,
+			1.2 * modelArray[1].scene.scale.z
+		);
+
+		reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
+
+		// console.log("middle");
+
+		// modelArray[1].scene.position.y = 0.25;
+		// modelArray[1].scene.rotation.x = -Math.PI / 2;
+		// hasLoaded = true;
+		// console.log("end");
+	});
+
+	const displayModel = (idx) => {
+		Promise.all([p1, p2]).then(() => {
+			scene.add(modelArray[idx].scene);
+		});
+	};
+
 	// function adds an object to the scene after user's click
 	function onSelect() {
-		if (reticle.visible && !isModel) {
-			isModel = true;
+		if (reticle.visible) {
+			if (currentModelIndex === 0) {
+				scene.remove(modelArray[0].scene);
+				currentModelIndex++;
+				displayModel(currentModelIndex);
+			} else if (currentModelIndex === 1) {
+				scene.remove(modelArray[1].scene);
+				currentModelIndex = 0;
+				displayModel(currentModelIndex);
+			}
 
-			let model = "chair";
+			// isModel = true;
 
-			let loader = new GLTFLoader().setPath("models/");
-			loader.load(
-				model + ".glb",
-				(glb) => {
-					obj = glb.scene;
-					// obj.scale.set(
-					// 	4 * glb.scene.scale.x,
-					// 	4 * glb.scene.scale.y,
-					// 	4 * glb.scene.scale.z
-					// );
+			// let model = "chair";
 
-					console.log(glb.animations);
+			// let loader = new GLTFLoader().setPath("models/");
+			// loader.load(
+			// 	model + ".glb",
+			// 	(glb) => {
+			// 		obj = glb.scene;
+			// 		// obj.scale.set(
+			// 		// 	4 * glb.scene.scale.x,
+			// 		// 	4 * glb.scene.scale.y,
+			// 		// 	4 * glb.scene.scale.z
+			// 		// );
 
-					reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
-					scene.add(obj);
+			// 		console.log(glb.animations);
 
-					hasLoaded = true;
-				},
-				onProgress,
-				onError
-			);
+			// 		reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
+			// 		scene.add(obj);
 
-			model = "doc_animated_smaller";
-			loader.load(
-				model + ".glb",
-				(glb) => {
-					obj = glb.scene;
-					// obj.scale.set(
-					// 	4 * glb.scene.scale.x,
-					// 	4 * glb.scene.scale.y,
-					// 	4 * glb.scene.scale.z
-					// );
+			// 		hasLoaded = true;
+			// 	},
+			// 	onProgress,
+			// 	onError
+			// );
 
-					console.log(glb.animations);
+			// model = "doc_animated_smaller";
+			// loader.load(
+			// 	model + ".glb",
+			// 	(glb) => {
+			// 		obj = glb.scene;
+			// 		// obj.scale.set(
+			// 		// 	4 * glb.scene.scale.x,
+			// 		// 	4 * glb.scene.scale.y,
+			// 		// 	4 * glb.scene.scale.z
+			// 		// );
 
-					reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
-					scene.add(obj);
+			// 		console.log(glb.animations);
 
-					hasLoaded = true;
-				},
-				onProgress,
-				onError
-			);
+			// 		reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
+			// 		scene.add(obj);
+
+			// 		hasLoaded = true;
+			// 	},
+			// 	onProgress,
+			// 	onError
+			// );
 
 			// const geometry2 = new THREE.CylinderGeometry(
 			// 	0.1,
