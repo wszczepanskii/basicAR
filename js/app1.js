@@ -10,6 +10,7 @@ let hitTestSource = null;
 let hitTestSourceRequested = false;
 
 let modelArray = [];
+let currentModelIndex = 0;
 
 init();
 animate();
