@@ -90,7 +90,7 @@ function init() {
 		}
 
 		if (clickCounter === 2) {
-			model = "doc_animated_smaller";
+			let model = "doc_animated_smaller";
 			loader.load(
 				model + ".glb",
 				(glb) => {
