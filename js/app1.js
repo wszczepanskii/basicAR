@@ -52,11 +52,11 @@ function init() {
 	let p1 = laodModel("models/chair.glb").then((result) => {
 		let obj = result.scene;
 		modelArray[0] = result;
-		modelArray[0].scene.scale.set(
-			1.2 * modelArray[0].scene.scale.x,
-			1.2 * modelArray[0].scene.scale.y,
-			1.2 * modelArray[0].scene.scale.z
-		);
+		// modelArray[0].scene.scale.set(
+		// 	1.2 * modelArray[0].scene.scale.x,
+		// 	1.2 * modelArray[0].scene.scale.y,
+		// 	1.2 * modelArray[0].scene.scale.z
+		// );
 
 		reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
 		// modelArray[0].scene.position.y = 0.25;
@@ -69,11 +69,11 @@ function init() {
 		// console.log("start");
 		let obj = result.scene;
 		modelArray[1] = result;
-		modelArray[1].scene.scale.set(
-			1.2 * modelArray[1].scene.scale.x,
-			1.2 * modelArray[1].scene.scale.y,
-			1.2 * modelArray[1].scene.scale.z
-		);
+		// modelArray[1].scene.scale.set(
+		// 	1.2 * modelArray[1].scene.scale.x,
+		// 	1.2 * modelArray[1].scene.scale.y,
+		// 	1.2 * modelArray[1].scene.scale.z
+		// );
 
 		reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
 
