@@ -69,6 +69,28 @@ function init() {
 				onError
 			);
 
+			model = "doc_animated_smaller";
+			loader.load(
+				model + ".glb",
+				(glb) => {
+					obj = glb.scene;
+					// obj.scale.set(
+					// 	4 * glb.scene.scale.x,
+					// 	4 * glb.scene.scale.y,
+					// 	4 * glb.scene.scale.z
+					// );
+
+					console.log(glb.animations);
+
+					reticle.matrix.decompose(obj.position, obj.quaternion, obj.scale);
+					scene.add(obj);
+
+					hasLoaded = true;
+				},
+				onProgress,
+				onError
+			);
+
 			// const geometry2 = new THREE.CylinderGeometry(
 			// 	0.1,
 			// 	0.1,
